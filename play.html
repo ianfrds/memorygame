@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Game | Kelompok 3</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="title">Memory Game</h2>
+      <div class="game"></div>
+      <div class="container-extra">
+        <div class="score-container">
+          <p>Score: <span id="score">0</span></p>
+        </div>
+        <div class="timer-container">
+          <p>Time: <span id="timer">60</span> seconds</p>
+        </div>
+      </div>
+      <button class="reset" onclick="window.location.reload();">Reset</button>
+      <a href="/index.html">
+        <button class="reset">Back</button>
+      </a>
+      <div class="result-container" style="display: none">
+        <p>Congratulations! You've completed the level.</p>
+        <a href="/level2.html">
+          <button class="next-level">Next Level</button>
+        </a>
+      </div>
+      <div class="game-over-container" style="display: none">
+        <p>Game Over! Try Again.</p>
+        <button class="reset" onclick="window.location.reload();">
+          Try Again
+        </button>
+      </div>
+    </div>
+    <script>
+      const emojis = [
+        "❤️",
+        "❤️",
+        "✌️",
+        "✌️",
+        "😎",
+        "😎",
+        "😜",
+        "😜",
+        "😶‍🌫️",
+        "😶‍🌫️",
+        "🫠",
+        "🫠",
+        "☹️",
+        "☹️",
+        "🥸",
+        "🥸",
+      ];
+      var shuffle_emojis = emojis.sort(() => (Math.random() > 0.5 ? 2 : -1));
+      var score = 0;
+      var timerSeconds = 60;
+      var timerInterval;
+
+      function startTimer() {
+        timerInterval = setInterval(function () {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            document.getElementById("timer").textContent = timerSeconds;
+          } else {
+            clearInterval(timerInterval);
+            showGameOverContainer();
+          }
+        }, 1000);
+      }
+
+      startTimer();
+
+      for (var i = 0; i < emojis.length; i++) {
+        let box = document.createElement("div");
+        box.className = "item";
+        box.innerHTML = shuffle_emojis[i];
+
+        box.onclick = function () {
+          this.classList.add("boxOpen");
+          setTimeout(function () {
+            if (document.querySelectorAll(".boxOpen").length > 1) {
+              if (
+                document.querySelectorAll(".boxOpen")[0].innerHTML ==
+                document.querySelectorAll(".boxOpen")[1].innerHTML
+              ) {
+                document
+                  .querySelectorAll(".boxOpen")[0]
+                  .classList.add("boxMatch");
+                document
+                  .querySelectorAll(".boxOpen")[1]
+                  .classList.add("boxMatch");
+
+                document
+                  .querySelectorAll(".boxOpen")[1]
+                  .classList.remove("boxOpen");
+                document
+                  .querySelectorAll(".boxOpen")[0]
+                  .classList.remove("boxOpen");
+
+                if (
+                  document.querySelectorAll(".boxMatch").length == emojis.length
+                ) {
+                  showResultContainer();
+                  clearInterval(timerInterval);
+                }
+                updateScore();
+              } else {
+                document
+                  .querySelectorAll(".boxOpen")[1]
+                  .classList.remove("boxOpen");
+                document
+                  .querySelectorAll(".boxOpen")[0]
+                  .classList.remove("boxOpen");
+              }
+            }
+          }, 500);
+        };
+
+        document.querySelector(".game").appendChild(box);
+      }
+
+      function updateScore() {
+        score += 10;
+        document.getElementById("score").textContent = score;
+      }
+
+      function showResultContainer() {
+        const resultContainer = document.querySelector(".result-container");
+        resultContainer.style.display = "block";
+      }
+
+      function showGameOverContainer() {
+        const gameOverContainer = document.querySelector(
+          ".game-over-container"
+        );
+        gameOverContainer.style.display = "block";
+      }
+    </script>
+  </body>
+</html>
